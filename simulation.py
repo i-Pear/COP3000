@@ -27,12 +27,15 @@ with open(filename, "rb") as f:
 
 # read instructions
 ins_parser.init()
+addr_to_ins = {}
 with open(filename, "rb") as f:
     ins_parser.is_valid_ins_file(f)
     ins_parser.parse_insts(f)
+    for ins in ins_parser.insts:
+        addr_to_ins[ins.__addr] = ins
 
 # read EM memory
-data = read_bin(bin_path)
+em = read_bin(bin_path)
 
 # simulation
 # times = int(input('输入模拟时钟节拍数:'))
@@ -77,15 +80,19 @@ for time in range(times):
 
     # do calculation
     method = uins().get_ss()
+    C_out = 0
     if method == 0:
         # add
         alu.d = A + W
         if alu.d >= 256:
-            C = 1
+            C_out = 1
             alu.d -= 256
     elif method == 1:
         # minus
-        alu.d =
+        alu.d = A - W
+        if alu.d < 0:
+            C_out = 1
+            alu.d += 256
     elif method == 2:
         # or
         alu.d = A | W
@@ -94,13 +101,19 @@ for time in range(times):
         alu.d = A & W
     elif method == 4:
         # add with lower
-        alu.d =
+        alu.d = A + W + C
+        if alu.d >= 256:
+            C_out = 1
+            alu.d -= 256
     elif method == 5:
         # minus with lower
-        alu.d =
+        alu.d = A - W - C
+        if alu.d < 0:
+            C_out = 1
+            alu.d += 256
     elif method == 6:
         # !A
-        alu.d =
+        alu.d = A ^ 255
     elif method == 7:
         # A out
         alu.d = A
@@ -109,13 +122,49 @@ for time in range(times):
     alu.d = (alu.d & 254) >> 1
 
     # get symbols
-    Z = (alu.d == 0)
+    if uins().fen():
+        C = C_out
+        Z = (alu.d == 0)
 
     # instruction -> ibus
 
     # data -> dbus
+    if uins().get_xs() == 0:
+        # "用户IN"
+        DBUS = 0
+    elif uins().get_xs() == 1:
+        # "中断地址IA"
+        DBUS = 0
+    elif uins().get_xs() == 2:
+        # "堆栈寄存器ST"
+        DBUS = ST
+    elif uins().get_xs() == 3:
+        # "PC值"
+        DBUS = pc
+    elif uins().get_xs() == 4:
+        # "ALU直通
+        DBUS = alu.d
+    elif uins().get_xs() == 5:
+        # "ALU右移"
+        DBUS = alu.r
+    elif uins().get_xs() == 6:
+        # "ALU左移"
+        DBUS = alu.l
+    elif uins().get_xs() == 7:
+        # "浮空"
+        if uins().emen() and uins().emrd():
+            DBUS = em[ABUS]
+        else:
+            DBUS = 0
 
     # dbus -> data
+    if uins().emen() and uins().emwr():
+        em[ABUS] = DBUS
+    if uins().iren():
+        # dealt as following
+        pass
+    if uins().elp():
+        pc = DBUS
 
     # PC / uPC
     if uins().iren():

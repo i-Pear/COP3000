@@ -1,0 +1,16 @@
+助记符,机器码1,机器码2,机器码3,指令说明
+_FATCH_,000000xx 00-03,,,实验机占用，不可修改。复位后，所有寄存器清0，首先执行_FATCH_指令取指。
+SHL A,000001xx 04-07,,,
+ADD A，#II,000010xx 08-0B,#II,,
+SUBC A，R?,000011xx 0C-0F,,,
+SUBC A，#II,000100xx 10-13,#II,,
+LD A，R?,000101xx 14-17,,,
+LD A，MM,000110xx 18-1B,MM,,
+LD A，#II,000111xx 1C-1F,#II,,
+STO R?，A,001000xx 20-23,,,
+STO MM，A,001001xx 24-27,MM,,
+CLEAR #II,001010xx 28-2B,#II,,
+JC MM,101000xx A0-A3,MM,,
+JZ MM,101001xx A4-A7,MM,,
+JMP MM,101011xx AC-AF,MM,,
+_INT_,101110xx B8-BB,,,实验机占用，不可修改。进入中断时，实验机硬件产生 _INT_ 指令。

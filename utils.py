@@ -16,7 +16,7 @@ def error(msg):
 def log(msg):
 	"""仅在 DEBUG 模式下输出信息"""
 	if IS_DEBUG_MODE:
-		print(f"[DEBUG] {msg}", file=stderr)
+		print(f"[DEBUG] {msg}")
 
 
 def read(f, size=1):

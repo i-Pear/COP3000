@@ -5,15 +5,15 @@ class Uinst:
 
 	def __init__(self, b):
 		"""b 为 4 个 bytes"""
-		self.__byte = (b[2] << 16) + (b[1] << 8) + (b[0])
+		self.byte = (b[2] << 16) + (b[1] << 8) + (b[0])
 
 	def is_default_uint(self):
 		"""该微指令是否为默认指令"""
-		return self.__byte == 0xffffff
+		return self.byte == 0xffffff
 
 	def get_upro(self):
 		"""获取微程序"""
-		return hex(self.__byte)[2:].upper()
+		return hex(self.byte)[2:].upper()
 
 	# X2X1X0 对应的数据输出字符串
 	xs_map_data_out = [
@@ -33,7 +33,7 @@ class Uinst:
 
 	def get_data_in(self):
 		"""获取数据打入"""
-		b = self.__byte
+		b = self.byte
 		buf = []
 		if self.aen():
 			buf.append("寄存器A")
@@ -105,89 +105,89 @@ class Uinst:
 
 	def get_xs(self):
 		"""计算 X2X1X0 形式的二进制值，对应十进制0-7"""
-		x2 = (Uinst.X2_MASK & self.__byte) >> 7
-		x1 = (Uinst.X1_MASK & self.__byte) >> 6
-		x0 = (Uinst.X0_MASK & self.__byte) >> 5
+		x2 = (Uinst.X2_MASK & self.byte) >> 7
+		x1 = (Uinst.X1_MASK & self.byte) >> 6
+		x0 = (Uinst.X0_MASK & self.byte) >> 5
 		return x2 * 4 + x1 * 2 + x0
 
 	def get_ss(self):
 		"""计算 S2S1S0 形式的二进制值，对应十进制0-7"""
-		s2 = (Uinst.S2_MASK & self.__byte) >> 2
-		s1 = (Uinst.S1_MASK & self.__byte) >> 1
-		s0 = (Uinst.S0_MASK & self.__byte) >> 0
+		s2 = (Uinst.S2_MASK & self.byte) >> 2
+		s1 = (Uinst.S1_MASK & self.byte) >> 1
+		s0 = (Uinst.S0_MASK & self.byte) >> 0
 		return s2 * 4 + s1 * 2 + s0
 
 	def xrd(self):
-		return not Uinst.XRD_MASK & self.__byte
+		return not Uinst.XRD_MASK & self.byte
 
 	def emwr(self):
-		return not Uinst.EMWR_MASK & self.__byte
+		return not Uinst.EMWR_MASK & self.byte
 
 	def emrd(self):
-		return not Uinst.EMRD_MASK & self.__byte
+		return not Uinst.EMRD_MASK & self.byte
 
 	def pcoe(self):
-		return not Uinst.PCOE_MASK & self.__byte
+		return not Uinst.PCOE_MASK & self.byte
 
 	def emen(self):
-		return not Uinst.EMEN_MASK & self.__byte
+		return not Uinst.EMEN_MASK & self.byte
 
 	def iren(self):
-		return not Uinst.IREN_MASK & self.__byte
+		return not Uinst.IREN_MASK & self.byte
 
 	def eint(self):
-		return not Uinst.EINT_MASK & self.__byte
+		return not Uinst.EINT_MASK & self.byte
 
 	def elp(self):
-		return not Uinst.ELP_MASK & self.__byte
+		return not Uinst.ELP_MASK & self.byte
 
 	def maren(self):
-		return not Uinst.MAREN_MASK & self.__byte
+		return not Uinst.MAREN_MASK & self.byte
 
 	def maroe(self):
-		return not Uinst.MAROE_MASK & self.__byte
+		return not Uinst.MAROE_MASK & self.byte
 
 	def outen(self):
-		return not Uinst.OUTEN_MASK & self.__byte
+		return not Uinst.OUTEN_MASK & self.byte
 
 	def sten(self):
-		return not Uinst.STEN_MASK & self.__byte
+		return not Uinst.STEN_MASK & self.byte
 
 	def rrd(self):
-		return not Uinst.RRD_MASK & self.__byte
+		return not Uinst.RRD_MASK & self.byte
 
 	def rwr(self):
-		return not Uinst.RWR_MASK & self.__byte
+		return not Uinst.RWR_MASK & self.byte
 
 	def cn(self):
-		return not Uinst.CN_MASK & self.__byte
+		return not Uinst.CN_MASK & self.byte
 
 	def fen(self):
-		return not Uinst.FEN_MASK & self.__byte
+		return not Uinst.FEN_MASK & self.byte
 
 	def x2(self):
-		return not Uinst.X2_MASK & self.__byte
+		return not Uinst.X2_MASK & self.byte
 
 	def x1(self):
-		return not Uinst.X1_MASK & self.__byte
+		return not Uinst.X1_MASK & self.byte
 
 	def x0(self):
-		return not Uinst.X0_MASK & self.__byte
+		return not Uinst.X0_MASK & self.byte
 
 	def wen(self):
-		return not Uinst.WEN_MASK & self.__byte
+		return not Uinst.WEN_MASK & self.byte
 
 	def aen(self):
-		return not Uinst.AEN_MASK & self.__byte
+		return not Uinst.AEN_MASK & self.byte
 
 	def s2(self):
-		return not Uinst.S2_MASK & self.__byte
+		return not Uinst.S2_MASK & self.byte
 
 	def s1(self):
-		return not Uinst.S1_MASK & self.__byte
+		return not Uinst.S1_MASK & self.byte
 
 	def s0(self):
-		return not Uinst.S0_MASK & self.__byte
+		return not Uinst.S0_MASK & self.byte
 
 	# 微指令中 24 个控制位的掩码
 	XRD_MASK = 1 << 23

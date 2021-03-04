@@ -160,7 +160,7 @@ class Uinst:
 		return not Uinst.RWR_MASK & self.byte
 
 	def cn(self):
-		return not Uinst.CN_MASK & self.byte
+		return Uinst.CN_MASK & self.byte
 
 	def fen(self):
 		return not Uinst.FEN_MASK & self.byte

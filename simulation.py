@@ -46,7 +46,7 @@ em = read_bin(bin_path)
 
 # simulation
 # times = int(input('输入模拟时钟节拍数:'))
-times = 100000
+times = 1480
 
 # virtual devices
 pc = 0
@@ -83,11 +83,19 @@ print('Simulation start:')
 
 uins = lambda: um[upc]
 
+
+def debug_em():
+    for i in range(16):
+        for j in range(16):
+            print(get_hex(em[i * 16 + j]) + ' ', end='')
+        print()
+
+
 # Main Simulation Loop
 for time in range(times):
-    # print('-------------------------')
-    # print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
-    # print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
+    print('-------------------------')
+    print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
+    print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
     # address input
     if uins().pcoe():
         ABUS = pc
@@ -96,18 +104,18 @@ for time in range(times):
 
     # do calculation
     method = uins().get_ss()
-    C_out = 0
+    C_out_D = 0
     if method == 0:
         # add
         alu.d = A + W
         if alu.d >= 256:
-            C_out = 1
+            C_out_D = 1
             alu.d -= 256
     elif method == 1:
         # minus
         alu.d = A - W
         if alu.d < 0:
-            C_out = 1
+            C_out_D = 1
             alu.d += 256
     elif method == 2:
         # or
@@ -119,13 +127,13 @@ for time in range(times):
         # add with lower
         alu.d = A + W + C
         if alu.d >= 256:
-            C_out = 1
+            C_out_D = 1
             alu.d -= 256
     elif method == 5:
         # minus with lower
         alu.d = A - W - C
         if alu.d < 0:
-            C_out = 1
+            C_out_D = 1
             alu.d += 256
     elif method == 6:
         # !A
@@ -134,15 +142,13 @@ for time in range(times):
         # A out
         alu.d = A
 
-    alu.l = (alu.d & 127) << 1
-    alu.r = (alu.d & 254) >> 1
+    alu.l = (alu.d & 127) << 1 + (C & uins().cn())
+    C_out_L = 1 if alu.d & 128 else 0
+    alu.r = (alu.d & 254) >> 1 + (C & uins().cn()) * 128
+    C_out_R = alu.d & 1
 
     # get symbols
-    if uins().fen():
-        C = C_out
-        Z = (alu.d == 0)
-
-    # instruction -> ibus
+    # CN和FEN同时启用时可能出现问题 建议避免
 
     # data -> dbus
     if uins().get_xs() == 0:
@@ -160,12 +166,21 @@ for time in range(times):
     elif uins().get_xs() == 4:
         # "ALU直通
         DBUS = alu.d
+        if uins().fen():
+            C = C_out_D
+            Z = (alu.d == 0)
     elif uins().get_xs() == 5:
         # "ALU右移"
         DBUS = alu.r
+        if uins().fen():
+            C = C_out_R
+            Z = (alu.r == 0)
     elif uins().get_xs() == 6:
         # "ALU左移"
         DBUS = alu.l
+        if uins().fen():
+            C = C_out_L
+            Z = (alu.l == 0)
     elif uins().get_xs() == 7:
         # "浮空"
         if uins().emen() and uins().emrd():
@@ -197,7 +212,7 @@ for time in range(times):
     # uPC
     if uins().iren():
         IR_next = em[pc]
-        upc_next = em[pc]
+        upc_next = em[pc] // 4 * 4
         printe('got next instruction: {0}\tupc={1}'
                .format(addr_to_ins[upc_next // 4 * 4], um[upc_next].get_upro())
                )

@@ -1,5 +1,102 @@
-            l1:
-00 AC02     jmp l2
-            l2:
-02 AC00     jmp l1
+            ; BASE=160
+            DIVA EQU 160 ;160~163
+            DIVB EQU 164 ;164
+            RES EQU 165  ;165~166
+            COUNT EQU 167
+            
+00 1C19     LD A,#19H
+02 24A2     STO DIVA+2,A
+04 1C63     LD A,#63H
+06 24A3     STO DIVA+3,A
+            
+08 1C19     LD A,#19H
+0A 24A4     STO DIVB,A
+            
+0C 1C00     LD A,#0
+0E 24A7     STO COUNT,A
+10 24A0     STO DIVA,A
+12 24A1     STO DIVA+1,A
+14 24A5     STO RES,A
+16 24A6     STO RES+1,A
+            
+            LOOP:
+            
+18 2800     CLEAR #0
+1A 18A3     LD A,DIVA+3
+1C 04       SHL A
+1D 24A3     STO DIVA+3,A
+1F 18A2     LD A,DIVA+2
+21 04       SHL A
+22 24A2     STO DIVA+2,A
+24 18A1     LD A,DIVA+1
+26 04       SHL A
+27 24A1     STO DIVA+1,A
+29 18A0     LD A,DIVA
+2B 04       SHL A
+2C 24A0     STO DIVA,A
+            
+2E 2800     CLEAR #0
+30 18A6     LD A,RES+1
+32 04       SHL A
+33 24A6     STO RES+1,A
+35 18A5     LD A,RES
+37 04       SHL A
+38 24A5     STO RES,A
+            
+            ; COMPARE
+3A 18A0     LD A,DIVA
+3C 0800     ADD A,#0
+3E A442     JZ STEP2
+40 AC4E     JMP BIGGER
+            
+            STEP2:
+            ; DIVA[1]-DIVB[0]
+42 18A4     LD A,DIVB
+44 20       STO R0,A
+45 18A1     LD A,DIVA+1
+47 0C       SUBC A,R0
+48 A44E     JZ BIGGER ; EQUAL -> MINUS
+4A A064     JC NO_BIGGER ; DIVB BIGGER, DO NOTHING
+4C AC4E     JMP BIGGER
+            
+            BIGGER:
+4E 2800     CLEAR #0
+            
+50 18A4     LD A,DIVB
+52 20       STO R0,A
+53 18A1     LD A,DIVA+1
+55 0C       SUBC A,R0
+56 24A1     STO DIVA+1,A
+58 18A0     LD A,DIVA
+5A 1000     SUBC A,#0
+5C 24A0     STO DIVA,A
+            
+5E 18A6     LD A,RES+1
+60 0801     ADD A,#1
+62 24A6     STO RES+1,A
+            
+            NO_BIGGER:
+            
+64 18A7     LD A,COUNT
+66 0801     ADD A,#1
+68 24A7     STO COUNT,A
+6A 1010     SUBC A,#16
+6C A470     JZ ENDING
+6E AC18     JMP LOOP
+            ENDING:
+            
+            ;DISPLAY RESULT
+            
+70 18A5     LD A,RES
+72 20       STO R0,A
+73 18A6     LD A,RES+1
+75 21       STO R1,A
+            
+76 18A0     LD A,DIVA
+78 22       STO R2,A
+79 18A1     LD A,DIVA+1
+7B 23       STO R3,A
+            
+            ENDLESS_LOOP:
+7C AC7C     JMP ENDLESS_LOOP
             

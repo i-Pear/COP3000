@@ -46,7 +46,7 @@ em = read_bin(bin_path)
 
 # simulation
 # times = int(input('输入模拟时钟节拍数:'))
-times = 100
+times = 100000
 
 # virtual devices
 pc = 0
@@ -86,8 +86,8 @@ uins = lambda: um[upc]
 # Main Simulation Loop
 for time in range(times):
     # print('-------------------------')
-    print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
-    print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
+    # print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
+    # print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
     # address input
     if uins().pcoe():
         ABUS = pc
@@ -135,7 +135,7 @@ for time in range(times):
         alu.d = A
 
     alu.l = (alu.d & 127) << 1
-    alu.d = (alu.d & 254) >> 1
+    alu.r = (alu.d & 254) >> 1
 
     # get symbols
     if uins().fen():
@@ -179,8 +179,16 @@ for time in range(times):
     # dbus -> data
     if uins().emen() and uins().emwr():
         em[ABUS] = DBUS
+    if uins().maren():
+        MAR = DBUS
     if uins().sten():
         st = DBUS
+    if uins().rwr():
+        R[IR % 4] = DBUS
+    if uins().aen():
+        A = DBUS
+    if uins().wen():
+        W = DBUS
 
     upc_next = upc
     pc_next = pc
@@ -227,6 +235,8 @@ for time in range(times):
     upc = upc_next
     IR = IR_next
     pass
+
+print(1)
 
 
 class Status:

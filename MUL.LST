@@ -1,0 +1,171 @@
+            N EQU 2
+            MULA EQU 176
+            MULA_END EQU 176+N
+            MULB EQU 192
+            MULB_END EQU 192+N
+            RES EQU 208
+            RES_END EQU 208+N*2
+            A_POS EQU 224
+            B_POS EQU 225
+            BUF EQU 226
+            
+            ; A_POS: MULA POS
+            ; B_POS: MULB POS
+00 7CB0     LD A,#MULA
+02 88E0     STO A_POS,A
+            LOOP1:
+04 7CC0     LD A,#MULB
+06 88E1     STO B_POS,A
+            LOOP2:
+            
+            ; DO MUL
+            ;PLACE
+08 78E0     LD A,A_POS  ;NUM 1->R2
+0A 82       STO R2,A
+0B 76       LD A,@R2
+0C 82       STO R2,A
+            
+0D 78E1     LD A,B_POS   ;NUM 2->R3
+0F 83       STO R3,A
+10 77       LD A,@R3
+11 83       STO R3,A
+            
+12 8C00     LD R0,#0     ; RESULT (R0,R1)
+14 8D00     LD R1,#0
+16 7C80     LD A,#128      ; BIT POINTER
+18 88E2     STO BUF,A
+            
+            LAST0:
+1A 78E2     LD A,BUF
+1C 53       AND A,R3
+1D A42C     JZ OP_0_0
+            OP_0_1:
+            ; DO ADD
+1F 7800     LD A,0
+21 2C00     ADDC A,#0
+            
+23 71       LD A,R1
+24 22       ADDC A,R2
+25 81       STO R1,A
+            
+26 70       LD A,R0
+27 2C00     ADDC A,#0
+29 80       STO R0,A
+2A AC4C     JMP ENDING_1
+            OP_0_0:
+            ; NO OPERATION
+2C AC42     JMP ENDING_0
+            
+            LAST1:
+2E 78E2     LD A,BUF
+30 53       AND A,R3
+31 A435     JZ OP_1_0
+            OP_1_1:
+            ; NO OPERATION
+33 AC4C     JMP ENDING_1
+            OP_1_0:
+            ; DO MINUS
+35 7C00     LD A,#0
+37 2C00     ADDC A,#0
+            
+39 71       LD A,R1
+3A 42       SUBC A,R2
+3B 81       STO R1,A
+            
+3C 70       LD A,R0
+3D 4C00     SUBC A,#0
+3F 80       STO R0,A
+            
+40 AC42     JMP ENDING_0
+            
+            ENDING:
+            
+            ; MODIFY BIT POINTER
+            ENDING_0:
+            ; SHL RES
+42 0400     CLEAR #0
+44 09       SHLC R1
+45 08       SHLC R0
+            
+46 C0E2     SHR BUF
+            
+48 A45D     JZ MUL_END
+4A AC1A     JMP LAST0
+            
+            ENDING_1:
+            ; SHL RES
+4C 0400     CLEAR #0
+4E 09       SHLC R1
+4F 08       SHLC R0
+            
+50 C0E2     SHR BUF
+52 A456     JZ MUL_LAST
+54 AC2E     JMP LAST1
+            
+            ; DEAL WITH BIT[-1]=0
+            MUL_LAST:
+56 0400     CLEAR #0
+            
+58 71       LD A,R1
+59 42       SUBC A,R2
+5A 81       STO R1,A
+            
+5B E800     SUBC R0,#0
+            
+            MUL_END:
+            
+            ; (R0,R1)=[POS_A]*[POS_B]
+5D 78E0     LD A,A_POS
+5F 3CB0     SUB A,#MULA
+61 18E1     ADD A,B_POS
+63 3CC0     SUB A,#MULB
+65 1CD0     ADD A,#RES
+67 1C01     ADD A,#1
+69 83       STO R3,A
+            ; WRITE ADDRESS POINTER: R3
+6A 0400     CLEAR #0
+            
+6C 77       LD A,@R3
+6D 21       ADDC A,R1
+6E 87       STO @R3,A
+6F 73       LD A,R3
+70 3401     DEC A,#1
+72 83       STO R3,A
+            
+73 77       LD A,@R3
+74 20       ADDC A,R0
+75 87       STO @R3,A
+76 73       LD A,R3
+77 3401     DEC A,#1
+79 83       STO R3,A
+            
+            START:
+7A A07E     JC LAB1
+            ; IF HASN'T CYN
+7C AC89     JMP CEND
+            LAB1:
+7E 8E00     LD R2,#0
+80 77       LD A,@R3
+81 22       ADDC A,R2
+82 87       STO @R3,A
+83 73       LD A,R3
+84 3401     DEC A,#1
+86 83       STO R3,A
+87 AC7A     JMP START
+            CEND: ;CYN FINISHED
+89 F0E101   ADD B_POS,#1
+8C 4CC2     SUBC A,#MULB_END
+8E A492     JZ LOOP2_EXIT
+90 AC08     JMP LOOP2
+            LOOP2_EXIT:
+92 F0E001   ADD A_POS,#1
+95 4CB2     SUBC A,#MULA_END
+97 A49B     JZ LOOP1_EXIT
+99 AC04     JMP LOOP1
+            LOOP1_EXIT:
+            
+            ENDLESS_LOOP:
+9B AC9B     JMP ENDLESS_LOOP
+            
+            
+            END

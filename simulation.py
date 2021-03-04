@@ -13,8 +13,8 @@ utils.IS_DEBUG_MODE = True
 
 # filename = input("请输入 *.INS 文件的路径:")
 # bin_path = input('请输入 *.BIN 文件的路径:')
-filename = 'INST.INS'
-bin_path = 'DIVide.BIN'
+filename = 'MUL.INS'
+bin_path = 'MUL.BIN'
 
 # read macro instructions
 um = [
@@ -46,7 +46,7 @@ em = read_bin(bin_path)
 
 # simulation
 # times = int(input('输入模拟时钟节拍数:'))
-times = 1480
+times = 2000
 
 # virtual devices
 pc = 0
@@ -94,7 +94,8 @@ def debug_em():
 # Main Simulation Loop
 for time in range(times):
     print('-------------------------')
-    print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
+    print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc),
+                                               addr_to_ins[upc // 4 * 4] if upc // 4 * 4 in addr_to_ins else 'UNDEF'))
     print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
     # address input
     if uins().pcoe():
@@ -142,9 +143,9 @@ for time in range(times):
         # A out
         alu.d = A
 
-    alu.l = (alu.d & 127) << 1 + (C & uins().cn())
+    alu.l = ((alu.d & 127) << 1) + (C & uins().cn() // 512)
     C_out_L = 1 if alu.d & 128 else 0
-    alu.r = (alu.d & 254) >> 1 + (C & uins().cn()) * 128
+    alu.r = ((alu.d & 254) >> 1) + (C & uins().cn() // 512) * 128
     C_out_R = alu.d & 1
 
     # get symbols
@@ -251,7 +252,9 @@ for time in range(times):
     IR = IR_next
     pass
 
-print(1)
+print('Simulation completed.')
+print('The Final Em is:')
+debug_em()
 
 
 class Status:

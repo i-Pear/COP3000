@@ -6,7 +6,7 @@
             
 00 1C19     LD A,#19H
 02 24A2     STO DIVA+2,A
-04 1C63     LD A,#63H
+04 1CC3     LD A,#0C3H
 06 24A3     STO DIVA+3,A
             
 08 1C19     LD A,#19H

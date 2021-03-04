@@ -1,5 +1,6 @@
 from collections import namedtuple
 import ins_parser
+from sys import stderr
 from ins_parser import insts
 from bin_parser import get_hex
 from copy import deepcopy
@@ -45,7 +46,7 @@ em = read_bin(bin_path)
 
 # simulation
 # times = int(input('输入模拟时钟节拍数:'))
-times = 20
+times = 100
 
 # virtual devices
 pc = 0
@@ -84,9 +85,9 @@ uins = lambda: um[upc]
 
 # Main Simulation Loop
 for time in range(times):
-    print('-------------------------')
-    print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
-    print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
+    # print('-------------------------')
+    # print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
+    # print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
     # address input
     if uins().pcoe():
         ABUS = pc
@@ -184,6 +185,9 @@ for time in range(times):
     # PC / uPC
     if uins().iren():
         upc = em[pc]
+        print('got next instruction: {0}\tupc={1}'
+              .format(addr_to_ins[upc // 4 * 4], uins().get_upro())
+              ,file=stderr)
     else:
         upc += 1
     if uins().elp():

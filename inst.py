@@ -8,7 +8,7 @@ class Inst:
 	def __init__(self, op, addr, num1='', num2=''):
 		self.__t_cnt = 0
 		self.__op = op
-		self.__addr = addr
+		self.addr = addr
 		self.__num1 = num1
 		self.__num2 = num2
 		self.upros = []
@@ -20,13 +20,13 @@ class Inst:
 
 	def get_addr_num(self):
 		"""获取地址的数字形式"""
-		return self.__addr
+		return self.addr
 
 	def get_addr_str(self):
 		"""获取地址的字符串形式"""
-		bin_addr = bin(self.__addr)[2:].rjust(8, '0')[:-2] + 'xx'
-		hex_addr = hex(self.__addr)[2:].rjust(2, '0').upper()
-		hex_addr_add_3 = hex(self.__addr + 3)[2:].rjust(2, '0').upper()
+		bin_addr = bin(self.addr)[2:].rjust(8, '0')[:-2] + 'xx'
+		hex_addr = hex(self.addr)[2:].rjust(2, '0').upper()
+		hex_addr_add_3 = hex(self.addr + 3)[2:].rjust(2, '0').upper()
 		return f"{bin_addr} {hex_addr}-{hex_addr_add_3}"
 
 	def get_op_num1(self):

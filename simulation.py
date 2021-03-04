@@ -32,7 +32,7 @@ with open(filename, "rb") as f:
     ins_parser.is_valid_ins_file(f)
     ins_parser.parse_insts(f)
     for ins in ins_parser.insts:
-        addr_to_ins[ins.__addr] = ins
+        addr_to_ins[ins.addr] = ins
 
 # read EM memory
 em = read_bin(bin_path)
@@ -49,7 +49,14 @@ W = 0
 C = 0
 Z = 0
 
-alu = namedtuple('ALU_OUT', ['l', 'd', 'r'])(0, 0, 0)
+
+class ALU:
+    d = 0
+    l = 0
+    r = 0
+
+
+alu = ALU()
 
 R = [0] * 4
 
@@ -153,22 +160,32 @@ for time in range(times):
     elif uins().get_xs() == 7:
         # "浮空"
         if uins().emen() and uins().emrd():
+            # "EM存储器输入"
             DBUS = em[ABUS]
+        elif uins().rrd():
+            DBUS = R[IR % 4]
         else:
             DBUS = 0
 
     # dbus -> data
     if uins().emen() and uins().emwr():
         em[ABUS] = DBUS
-    if uins().iren():
-        # dealt as following
-        pass
-    if uins().elp():
-        pc = DBUS
+    if uins().sten():
+        st = DBUS
 
     # PC / uPC
     if uins().iren():
-        upc = IBUS
+        IR = DBUS
+    if uins().elp():
+        if (IR >> 2) % 4 == 0 and C:
+            # JC
+            upc = DBUS
+        elif (IR >> 2) % 4 == 1 and Z:
+            upc = DBUS
+        elif (IR >> 2) % 4 == 3:
+            upc = DBUS
+        else:
+            upc += 1
 
     pass
 

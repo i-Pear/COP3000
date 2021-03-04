@@ -1,10 +1,12 @@
 from collections import namedtuple
 import ins_parser
+from ins_parser import insts
 from bin_parser import get_hex
 from copy import deepcopy
 import utils
 from upro import Uinst
 from bin_parser import read_bin
+import inst
 
 utils.IS_DEBUG_MODE = True
 
@@ -20,19 +22,23 @@ um = [
     Uinst(b'\xff\xff\xff\x00'),
     Uinst(b'\xff\xff\xff\x00'),
 ]
-with open(filename, "rb") as f:
-    f.read(15)
-    for _ in range(252):
-        um.append(Uinst(f.read(4)))
-
-# read instructions
 ins_parser.init()
 addr_to_ins = {}
+
 with open(filename, "rb") as f:
+    # parse ins
     ins_parser.is_valid_ins_file(f)
     ins_parser.parse_insts(f)
     for ins in ins_parser.insts:
         addr_to_ins[ins.addr] = ins
+    addr_to_ins[0] = inst.Inst('_FATCH_', 0)
+    # parse uM
+    f.read(15)
+    for _ in range(252):
+        um.append(Uinst(f.read(4)))
+print('uM read finished:')
+for i in range(256):
+    print('uM[{0}]:\t{1}'.format(i, hex(um[i].byte)))
 
 # read EM memory
 em = read_bin(bin_path)
@@ -78,10 +84,12 @@ uins = lambda: um[upc]
 
 # Main Simulation Loop
 for time in range(times):
+    print('-------------------------')
+    print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
+    print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
     # address input
     if uins().pcoe():
         ABUS = pc
-        pc += 1
     if uins().maroe():
         ABUS = MAR
 
@@ -175,17 +183,23 @@ for time in range(times):
 
     # PC / uPC
     if uins().iren():
-        IR = DBUS
+        upc = em[pc]
+    else:
+        upc += 1
     if uins().elp():
         if (IR >> 2) % 4 == 0 and C:
             # JC
-            upc = DBUS
+            pc = DBUS
+            continue
         elif (IR >> 2) % 4 == 1 and Z:
-            upc = DBUS
+            # JZ
+            pc = DBUS
+            continue
         elif (IR >> 2) % 4 == 3:
-            upc = DBUS
-        else:
-            upc += 1
+            pc = DBUS
+            continue
+    if uins().pcoe():
+        pc += 1
 
     pass
 

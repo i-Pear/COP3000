@@ -1,10 +1,10 @@
-from collections import namedtuple
 import ins_parser
-from sys import stderr
+from sys import stderr, stdout
 from ins_parser import insts
 from bin_parser import get_hex
 from copy import deepcopy
 import utils
+from utils import printe
 from upro import Uinst
 from bin_parser import read_bin
 import inst
@@ -14,7 +14,7 @@ utils.IS_DEBUG_MODE = True
 # filename = input("请输入 *.INS 文件的路径:")
 # bin_path = input('请输入 *.BIN 文件的路径:')
 filename = 'INST.INS'
-bin_path = 'TEST.BIN'
+bin_path = 'DIVide.BIN'
 
 # read macro instructions
 um = [
@@ -86,8 +86,8 @@ uins = lambda: um[upc]
 # Main Simulation Loop
 for time in range(times):
     # print('-------------------------')
-    # print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
-    # print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
+    print("circle:{0}\tpc:{1}\tins:{2}".format(time, hex(pc), addr_to_ins[upc // 4 * 4]))
+    print('upc={0}\t{1}'.format(hex(upc), uins().get_upro()))
     # address input
     if uins().pcoe():
         ABUS = pc
@@ -182,29 +182,50 @@ for time in range(times):
     if uins().sten():
         st = DBUS
 
-    # PC / uPC
+    upc_next = upc
+    pc_next = pc
+    IR_next = IR
+
+    # uPC
     if uins().iren():
-        upc = em[pc]
-        print('got next instruction: {0}\tupc={1}'
-              .format(addr_to_ins[upc // 4 * 4], uins().get_upro())
-              ,file=stderr)
+        IR_next = em[pc]
+        upc_next = em[pc]
+        printe('got next instruction: {0}\tupc={1}'
+               .format(addr_to_ins[upc_next // 4 * 4], um[upc_next].get_upro())
+               )
     else:
-        upc += 1
+        upc_next = upc + 1
+
+    # PC
     if uins().elp():
         if (IR >> 2) % 4 == 0 and C:
             # JC
-            pc = DBUS
-            continue
+            pc_next = DBUS
+            printe('! jc: pc set to:{1}\tnext_ins={0}'
+                   .format(addr_to_ins[em[pc_next] // 4 * 4], hex(pc_next))
+                   )
+            stderr.flush()
         elif (IR >> 2) % 4 == 1 and Z:
             # JZ
-            pc = DBUS
-            continue
+            pc_next = DBUS
+            printe('! jz to: pc set to:{1}\tnext_ins={0}'
+                   .format(addr_to_ins[em[pc_next] // 4 * 4], hex(pc_next))
+                   )
+            stderr.flush()
         elif (IR >> 2) % 4 == 3:
-            pc = DBUS
-            continue
-    if uins().pcoe():
-        pc += 1
+            pc_next = DBUS
+            printe('! jmp to: pc set to:{1}\tnext_ins={0}'
+                   .format(addr_to_ins[em[pc_next] // 4 * 4], hex(pc_next))
+                   )
+            stderr.flush()
+        elif uins().pcoe():
+            pc_next = pc + 1
+    elif uins().pcoe():
+        pc_next = pc + 1
 
+    pc = pc_next
+    upc = upc_next
+    IR = IR_next
     pass
 
 

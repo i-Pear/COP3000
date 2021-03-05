@@ -15,14 +15,17 @@ import lst_parser
 """
 ins_path: INS(指令系统)文件路径
 bin_path: BIN(EM二进制文件)路径
+lst_path: LST文件路径
 simulation_times: 模拟的微指令周期数，即模拟多少次"单微指令执行"
+ins_description: 指令的解释，以汇编文件中指令的位置为索引；也可以修改为以指令本身做索引(即不同位置的相同指令采用相同的描述)
 """
 ins_path = 'samples/divide/DIVIDE.INS'
 bin_path = 'samples/divide/DIVIDE.BIN'
 lst_path = 'samples/divide/DIVIDE.LST'
 simulation_times = 2000
 ins_description = {
-
+    # example
+    '00': '这是第一条指令，加载数据到累加器'
 }
 
 # simulation
@@ -137,6 +140,9 @@ class Status:
         self.IBUS = IBUS
 
     def get_difference(self):
+        """
+        作为上一次状态，与当前状态对比，返回不一致的值
+        """
         result = []
         if self.pc != pc:
             result.append(('pc', get_hex(pc)))
@@ -180,6 +186,9 @@ def trace():
 
 
 def debug_em():
+    """
+    打印EM数据矩阵
+    """
     for i in range(16):
         for j in range(16):
             print(get_hex(em[i * 16 + j]) + ' ', end='')
@@ -346,8 +355,8 @@ for time in range(simulation_times):
             pass
         run_log.append(Log())
         run_log[-1].ins_addr = get_hex(pc - 1)
-        run_log[-1].ins_description = ins_description[upc_next] \
-            if upc_next in ins_description else 'Not Defined'
+        run_log[-1].ins_description = ins_description[get_hex(pc)] \
+            if get_hex(pc) in ins_description else 'Not Defined'
         run_log[-1].machine_code = addr_to_ins[upc_next].get_addr_str()
         run_log[-1].upc = get_hex(upc_next)
         run_log[-1].pc = get_hex(pc)

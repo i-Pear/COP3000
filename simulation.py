@@ -401,13 +401,31 @@ debug_em()
 print('Output Runtime Logs...')
 workbook = xlwt.Workbook(encoding='utf-8')
 worksheet = workbook.add_sheet('ins Trace')
+style = xlwt.XFStyle()
+font = xlwt.Font()
+font.name = "等线"
+font.bold = True
+font.height = 210
+style.font = font
+style.alignment.horz = 2
+style.alignment.vert = 1
+style.alignment.wrap = 1
+
+worksheet.write(0, 0, label="汇编指令", style=style)
+worksheet.write(0, 1, label="程序地址", style=style)
+worksheet.write(0, 2, label="机器码", style=style)
+worksheet.write(0, 3, label="指令说明", style=style)
+worksheet.write(0, 4, label="微程序", style=style)
+worksheet.write(0, 5, label="PC", style=style)
+worksheet.write(0, 6, label="mPC", style=style)
+worksheet.write(0, 7, label="运行时寄存器或存储器的值", style=style)
 for row, log in enumerate(run_log):
-    worksheet.write(row, 0, label=log.ins)
-    worksheet.write(row, 1, label=log.pc)
-    worksheet.write(row, 2, label=log.machine_code)
-    worksheet.write(row, 3, label=log.ins_description)
-    worksheet.write(row, 4, label='\r\n'.join(log.macro_programs))
-    worksheet.write(row, 5, label=log.pc)
-    worksheet.write(row, 6, label=log.upc)
-    worksheet.write(row, 7, label=log.difference)
+    worksheet.write(row + 1, 0, label=log.ins, style=style)
+    worksheet.write(row + 1, 1, label=log.ins_addr, style=style)
+    worksheet.write(row + 1, 2, label=log.machine_code, style=style)
+    worksheet.write(row + 1, 3, label=log.ins_description, style=style)
+    worksheet.write(row + 1, 4, label='\r\n'.join(log.macro_programs), style=style)
+    worksheet.write(row + 1, 5, label=log.pc, style=style)
+    worksheet.write(row + 1, 6, label=log.upc, style=style)
+    worksheet.write(row + 1, 7, label=log.difference, style=style)
 workbook.save('Inst Trace.xls')

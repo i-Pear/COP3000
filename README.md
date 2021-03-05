@@ -65,7 +65,7 @@
 
   got next instruction：触发IR新指令载入，显示下一条指令
 
-  ![img2](assets\img2.jpg)
+  img src="assets\img2.jpg" alt="img2"  />
 
   模拟完成时，输出当前EM数据矩阵，可用于检验正确性。
 

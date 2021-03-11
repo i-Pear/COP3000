@@ -384,7 +384,7 @@ for time in range(simulation_times):
             printe('! jz to: pc set to:{1}\tnext_ins={0}'
                    .format(addr_to_ins[em[pc_next] // 4 * 4], hex(pc_next))
                    )
-        elif (IR >> 2) % 4 == 3:
+        elif (IR >> 2) % 4 == 3 or (IR >> 2) % 4 == 2:
             pc_next = DBUS
             printe('! jmp to: pc set to:{1}\tnext_ins={0}'
                    .format(addr_to_ins[em[pc_next] // 4 * 4], hex(pc_next))

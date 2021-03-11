@@ -25,7 +25,8 @@ lst_path = 'samples/divide/DIVIDE.LST'
 simulation_times = 2000
 ins_description = {
     # example
-    '00': '这是第一条指令，加载数据到累加器'
+    '00': '这是第一条指令，加载数据到累加器',
+    '02': '这是一条示例'
 }
 
 # simulation

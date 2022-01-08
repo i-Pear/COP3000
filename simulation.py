@@ -322,7 +322,7 @@ for time in range(simulation_times):
     if uins().maren():
         MAR = DBUS
     if uins().sten():
-        st = DBUS
+        ST = DBUS
     if uins().rwr():
         R[IR % 4] = DBUS
     if uins().aen():

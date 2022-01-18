@@ -1,0 +1,124 @@
+MOV  A,#0B0H
+MOV  0FAH,A
+MOV  A,#02H
+MOV  0FBH,A
+MOV  A,#10H
+MOV  0FCH,A
+
+MOV  A,#00H
+MOV  0B0H,A
+MOV  A,#00H
+MOV  0B1H,A
+MOV  A,#32H
+MOV  0B2H,A
+MOV  A,#33H
+MOV  0B3H,A
+MOV  A,#70H
+MOV  0B4H,A
+MOV  A,#68H
+MOV  0B5H,A
+; ans: 160A B4B8
+
+LOOP:
+    mov A,0FCH
+    mov R3,A
+    ; R1 & 1 ?
+    MOV  A,0FAH
+    ADD  A,0FBH
+    ADD  A,0FBH
+    SUB  A,#01H ; R1ĩβ
+    mov  R0,A
+    mov  A,@R0
+    AND  A,#01H
+    JZ  addend
+        ; R0 = R0 + R2
+        MOV  R0,#00H
+        mov  A,0FBH
+        MOV  R1,A
+        MOV  A,0FAH
+        add  A,0FBH
+        mov  R2,A
+        add  A,0FBH
+        add  A,0FBH
+        MOV  R3,A
+
+        addloop:
+            mov A,R1
+            add A,#00H
+            jz addend
+            sub A,#01H
+            mov R1,A
+
+            mov A,R2
+            sub A,#01H
+            mov R2,A
+            mov A,R3
+            sub A,#01H
+            mov R3,A
+
+            mov A,R0
+            add A,#0FFH
+
+            mov A,@R2
+            addc A,@R3
+            mov @R2,A
+
+            mov A,#00H
+            addc A,#00H
+            mov R0,A
+
+        jmp addloop
+
+    addend:
+
+    ; (R0,R1)>>1
+    MOV  A,0FAH
+    mov  R0,A
+    MOV  A,0FBH
+    ADD  A,0FBH
+    MOV  R1,A
+    mov  R2,#00H
+
+    rrcloop:
+        mov A,R1
+        add A,#00H
+        jz LOOPEND
+        sub A,#01H
+        mov R1,A
+
+        mov A,R2
+        add A,#0FFH
+
+        mov A,@R0
+        RRC A
+        mov @R0,A
+
+        mov A,#00H
+        addc A,#00H
+        mov R2,A
+
+        mov A,R0
+        add A,#01H
+        mov R0,A
+
+    jmp rrcloop
+
+
+LOOPEND:
+MOV  A,0FCH
+sub  A,#01H
+MOV  0FCH,A
+JZ  final
+JMP  LOOP
+
+final:
+mov A,0B0H
+mov R0,A
+mov A,0B1H
+mov R1,A
+mov A,0B2H
+mov R2,A
+mov A,0B3H
+mov R3,A
+nope:
+JMP  nope

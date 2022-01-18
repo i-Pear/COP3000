@@ -22,12 +22,44 @@ ins_description: 指令的解释，以汇编文件中指令的位置为索引；
 ins_path = 'samples/divide/DIVIDE.INS'
 bin_path = 'samples/divide/DIVIDE.BIN'
 lst_path = 'samples/divide/DIVIDE.LST'
+trace_path = 'samples/divide/DIVIDE Trace.xls'
 simulation_times = 2000
-ins_description = {
-    # example
-    '00': '这是第一条指令，加载数据到累加器',
-    '02': '这是一条示例'
-}
+
+
+def ins2description(inst):
+    """
+    指令翻译成解释
+    """
+    ins = inst.split(' ')[0]
+    for i in inst.split(' ')[1:]:
+        if len(i)>0:
+            opt = i.split(',')
+            break
+
+    if ins == 'MOV':
+        return f'将{opt[1]}送入{opt[0]}'
+    elif ins == 'ADD':
+        return f'将{opt[0]}加上{opt[1]}'
+    elif ins == 'AND':
+        return f'将{opt[1]}与{opt[0]}相与'
+    elif ins == 'OR':
+        return f'将{opt[1]}与{opt[0]}相或'
+    elif ins == 'SUB':
+        return f'将{opt[0]}减去{opt[1]}'
+    elif ins == 'RRC':
+        return f'将{opt[0]}带进位右移'
+    elif ins == 'RLC':
+        return f'将{opt[0]}带进位左移'
+    elif ins == 'CPL':
+        return f'将{opt[0]}按位取反'
+    elif ins == 'JZ':
+        return f'结果为0则跳转到{opt[0]}'
+    elif ins == 'JC':
+        return f'有进位则跳转到{opt[0]}'
+    elif ins == 'JMP':
+        return f'无条件跳转到{opt[0]}'
+    else:
+        return 'Not Defined'
 
 # simulation
 
@@ -356,12 +388,11 @@ for time in range(simulation_times):
             pass
         run_log.append(Log())
         run_log[-1].ins_addr = get_hex(pc - 1)
-        run_log[-1].ins_description = ins_description[get_hex(pc)] \
-            if get_hex(pc) in ins_description else 'Not Defined'
         run_log[-1].machine_code = addr_to_ins[upc_next].get_addr_str()
         run_log[-1].upc = get_hex(upc_next)
         run_log[-1].pc = get_hex(pc)
         run_log[-1].ins = addr_to_ins_text[get_hex(pc)]
+        run_log[-1].ins_description = ins2description(run_log[-1].ins)
     else:
         upc_next = upc + 1
 
@@ -438,4 +469,4 @@ for row, log in enumerate(run_log):
     worksheet.write(row + 1, 5, label=log.pc, style=style)
     worksheet.write(row + 1, 6, label=log.upc, style=style)
     worksheet.write(row + 1, 7, label=log.difference, style=style)
-workbook.save('Inst Trace.xls')
+workbook.save(trace_path)

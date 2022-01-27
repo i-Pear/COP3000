@@ -1,0 +1,53 @@
+00 4080     MOV  R0,#80H  ;起始地址80H
+02 4104     MOV  R1,#04H  ;几个数
+04 4200     MOV  R2,#00H  ;进位位
+            
+06 3054     MOV  A,#54H
+08 3C80     MOV  80H,A
+0A 3055     MOV  A,#55H
+0C 3C81     MOV  81H,A
+0E 3032     MOV  A,#32H
+10 3C82     MOV  82H,A
+12 3033     MOV  A,#33H
+14 3C83     MOV  83H,A
+            ; 0x54553233H >> 1 = 
+            ; 0x2A2A9919H
+            
+16 4200     mov R2,#00H ;清空进位位
+            
+            loop:
+18 25           mov A,R1
+19 0400         add A,#00H
+1B A431         jz end0
+1D 1C01         sub A,#01H
+1F 35           mov R1,A
+            
+20 26           mov A,R2
+21 04FF         add A,#0FFH ;恢复进位位
+            
+23 28           mov A,@R0
+24 44           RRC A
+25 38           mov @R0,A
+            
+26 3000         mov A,#00H
+28 1000         addc A,#00H
+2A 36           mov R2,A ;保存进位位
+            
+2B 24           mov A,R0
+2C 0401         add A,#01H
+2E 34           mov R0,A
+            
+2F AC18     jmp loop
+            
+            
+            end0:
+31 2C80     mov A,80H
+33 34       mov R0,A
+34 2C81     mov A,81H
+36 35       mov R1,A
+37 2C82     mov A,82H
+39 36       mov R2,A
+3A 2C83     mov A,83H
+3C 37       mov R3,A
+3D AC31     jmp end0
+            

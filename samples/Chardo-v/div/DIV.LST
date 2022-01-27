@@ -1,0 +1,101 @@
+00 243F     MOV R0,#3FH
+02 253A     MOV R1,#3AH
+04 267F     MOV R2,#07FH
+            
+06 1C       MOV A,R0
+07 1080     AND A,#80H
+09 2B       MOV R3,A ; R0符号位在R3最高位上
+0A 1E       MOV A,R2
+0B 1080     AND A,#80H  ; R2符号位在A最高位上
+0D 0F       ADD A,R3
+0E 1080     AND A,#80H ; A+R3最高位有符号，则异号
+10 20F0     MOV 0F0H,A ; 保存结果符号
+            
+12 1E       MOV A,R2
+13 107F     AND A,#7FH
+15 2A       MOV R2,A ; 清除除数符号位
+            
+16 2708     MOV R3,#08H
+18 1F       MOV A,R3 ; 循环计数器，存放于R3
+19 20E0     MOV 0E0H,A
+            
+1B 1D       MOV A,R1
+1C 44       RLC A
+1D 29       MOV R1,A
+1E 1C       MOV A,R0
+1F 44       RLC A
+20 28       MOV R0,A ; (R0,R1)<<1
+            
+21 1E       MOV A,R2
+22 3C       SUB A,R0
+23 A069     JC  overflow ; 溢出预判
+            
+25 1C       MOV A,R0
+26 3E       SUB A,R2
+27 28       MOV R0,A
+            
+            div_loop:
+28 20F5         MOV 0F5H,A ; 记录A=R0-R2后状态
+2A 44           RLC A
+2B 1D           MOV A,R1
+2C 44           RLC A
+2D 29           MOV R1,A
+2E 1C           MOV A,R0
+2F 44           RLC A
+30 28           MOV R0,A ; (R0,R1)<<1
+31 A035         JC record_carry ; 上商位为1
+33 AC38         JMP count_down
+                record_carry:
+35 1F               MOV A,R3
+36 20E0             MOV 0E0H,A
+                count_down:
+38 1F               MOV A,R3
+39 3401             SUB A,#01H
+3B 2B               MOV R3,A ; 循环计数减一
+3C A44D             JZ  div_end
+            
+3E 18F5         MOV A,0F5H ; 根据R0-R2最高位状态判断进行加还是减
+40 44           RLC A
+41 A048         JC div_add
+43 1C               MOV A,R0
+44 3E               SUB A,R2
+45 28               MOV R0,A
+46 AC28             JMP div_loop
+                div_add:
+48 1C               MOV A,R0
+49 0E               ADD A,R2
+4A 28               MOV R0,A
+4B AC28             JMP div_loop
+            
+            div_end:
+4D 1D           MOV A,R1
+4E 48           CPL A  ; R1取反
+4F 30F0         OR A,0F0H  ; 恢复符号位
+51 29           MOV R1,A
+            
+52 1401         MOV A,#01H
+54 38E0         SUB A,0E0H ; 检查最后一次是否有进位
+56 A45F         JZ recovery_remainder
+                    ; 不恢复余数
+58 1C               MOV A,R0
+59 40               RRC A
+5A 107F             AND A,#7FH
+5C 28               MOV R0,A
+5D AC6D             JMP stop
+                recovery_remainder:
+                    ; 恢复余数
+5F 1C               MOV A,R0
+60 40               RRC A
+61 2C80             OR  A,#80H
+63 0E               ADD A,R2
+64 107F             AND A,#7FH
+66 28               MOV R0,A
+67 AC6D             JMP stop
+            
+            overflow:
+69 24FF         MOV R0,#0FFH
+6B 25FF         MOV R1,#0FFH
+            
+            stop:
+6D AC6D         JMP stop
+            

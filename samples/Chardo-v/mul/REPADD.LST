@@ -1,0 +1,71 @@
+00 4080     MOV  R0,#80H  ;起始地址80H/进位
+02 4104     MOV  R1,#04H  ;几个数
+04 4200     MOV  R2,#00H  ;游标0
+06 4300     MOV  R3,#00H  ;游标1
+            
+08 3054     MOV  A,#54H
+0A 3C80     MOV  80H,A
+0C 3055     MOV  A,#55H
+0E 3C81     MOV  81H,A
+10 3032     MOV  A,#32H
+12 3C82     MOV  82H,A
+14 3033     MOV  A,#33H
+16 3C83     MOV  83H,A
+            
+18 3070     MOV  A,#70H
+1A 3C84     MOV  84H,A
+1C 3068     MOV  A,#68H
+1E 3C85     MOV  85H,A
+20 3058     MOV  A,#58H
+22 3C86     MOV  86H,A
+24 30FF     MOV  A,#0FFH
+26 3C87     MOV  87H,A
+            ; ans: C4BD 8B32
+            
+28 24       mov A,R0
+29 0D       add A,R1
+2A 36       mov R2,A
+2B 0D       add A,R1
+2C 37       mov R3,A
+            
+2D 4000     mov R0,#00H
+            
+            loop:
+2F 25           mov A,R1
+30 0400         add A,#00H
+32 A44C         jz end0
+34 1C01         sub A,#01H
+36 35           mov R1,A ; 控制循环次数的计数器
+            
+37 26           mov A,R2
+38 1C01         sub A,#01H
+3A 36           mov R2,A
+3B 27           mov A,R3
+3C 1C01         sub A,#01H
+3E 37           mov R3,A  ; 修改游标
+            
+3F 24           mov A,R0
+40 04FF         add A,#0FFH ;恢复进位位
+            
+42 2A           mov A,@R2
+43 17           addc A,@R3
+44 3A           mov @R2,A
+            
+45 3000         mov A,#00H
+47 1000         addc A,#00H
+49 34           mov R0,A  ;保存进位位
+            
+4A AC2F     jmp loop
+            
+            
+            end0:
+4C 2C80     mov A,80H
+4E 34       mov R0,A
+4F 2C81     mov A,81H
+51 35       mov R1,A
+52 2C82     mov A,82H
+54 36       mov R2,A
+55 2C83     mov A,83H
+57 37       mov R3,A
+58 AC4C     jmp end0
+            

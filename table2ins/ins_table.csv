@@ -1,65 +1,65 @@
-,mnemonics,microinstruction,,,address
-1,_FATCH_,ffffcb00 ffffff00 ffffff00 ffffff00 ,,,0x0
-2,,,,,0x4
-3,,,,,0x8
-4,,,,,0xC
-5,"ADD A,R?",eff7ffff 90feffff ffffcbff ffffff00 ,,,0x10
-6,"ADD A,@R?",ff77ffff efbfd7ff 90feffff ffffcbff ,,,0x14
-7,"ADD A,MM",ff7fc7ff efbfd7ff 90feffff ffffcbff ,,,0x18
-8,"ADD A,#II",efffc7ff 90feffff ffffcbff ffffff00 ,,,0x1C
-9,"ADDC A,R?",eff7ffff 94feffff ffffcbff ffffff00 ,,,0x20
-10,"ADDC A,@R?",ff77ffff efbfd7ff 94feffff ffffcbff ,,,0x24
-11,"ADDC A,MM",ff7fc7ff efbfd7ff 94feffff ffffcbff ,,,0x28
-12,"ADDC A,#II",efffc7ff 94feffff ffffcbff ffffff00 ,,,0x2C
-13,"SUB A,R?",eff7ffff 91feffff ffffcbff ffffff00 ,,,0x30
-14,"SUB A,@R?",ff77ffff efbfd7ff 91feffff ffffcbff ,,,0x34
-15,"SUB A,MM",ff7fc7ff efbfd7ff 91feffff ffffcbff ,,,0x38
-16,"SUB A,#II",efffc7ff 91feffff ffffcbff ffffff00 ,,,0x3C
-17,"SUBC A,R?",eff7ffff 95feffff ffffcbff ffffff00 ,,,0x40
-18,"SUBC A,@R?",ff77ffff efbfd7ff 95feffff ffffcbff ,,,0x44
-19,"SUBC A,MM",ff7fc7ff efbfd7ff 95feffff ffffcbff ,,,0x48
-20,"SUBC A,#II",efffc7ff 95feffff ffffcbff ffffff00 ,,,0x4C
-21,"AND A,R?",eff7ffff 93feffff ffffcbff ffffff00 ,,,0x50
-22,"AND A,@R?",ff77ffff efbfd7ff 93feffff ffffcbff ,,,0x54
-23,"AND A,MM",ff7fc7ff efbfd7ff 93feffff ffffcbff ,,,0x58
-24,"AND A,#II",efffc7ff 93feffff ffffcbff ffffff00 ,,,0x5C
-25,"OR A,R?",eff7ffff 92feffff ffffcbff ffffff00 ,,,0x60
-26,"OR A,@R?",ff77ffff efbfd7ff 92feffff ffffcbff ,,,0x64
-27,"OR A,MM",ff7fc7ff efbfd7ff 92feffff ffffcbff ,,,0x68
-28,"OR A,#II",efffc7ff 92feffff ffffcbff ffffff00 ,,,0x6C
-29,"MOV A,R?",f7f7ffff ffffcbff ffffff00 ffffff00 ,,,0x70
-30,"MOV A,@R?",ff77ffff f7bfd7ff ffffcbff ffffff00 ,,,0x74
-31,"MOV A,MM",ff7fc7ff f7bfd7ff ffffcbff ffffff00 ,,,0x78
-32,"MOV A,#II",f7ffc7ff ffffcbff ffffff00 ffffff00 ,,,0x7C
-33,"MOV R?,A",9ffbffff ffffcbff ffffff00 ffffff00 ,,,0x80
-34,"MOV @R?,A",ff77ffff 9fbfb7ff ffffcbff ffffff00 ,,,0x84
-35,"MOV MM,A",ff7fc7ff 9fbfb7ff ffffcbff ffffff00 ,,,0x88
-36,"MOV R?,#II",fffbc7ff ffffcbff ffffff00 ffffff00 ,,,0x8C
-37,"READ A,MM",ff7fc700 f7bf7f00 ffffcbff ffffff00 ,,,0x90
-38,"WRITE MM,A",ff7fc700 9f9fff00 ffffcbff ffffff00 ,,,0x94
-39,,,,,0x98
-40,,,,,0x9C
-41,JC MM,ffffc6ff ffffcbff ffffff00 ffffff00 ,,,0xA0
-42,JZ MM,ffffc6ff ffffcbff ffffff00 ffffff00 ,,,0xA4
-43,,,,,0xA8
-44,JMP MM,ffffc6ff ffffcbff ffffff00 ffffff00 ,,,0xAC
-45,,,,,0xB0
-46,,,,,0xB4
-47,_INT_,7fefff00 3ffffe00 ffffcb00 ffffff00 ,,,0xB8
-48,CALL MM,7f7fefff 7fefffff ffbfd6ff ffffcbff ,,,0xBC
-49,IN,17ffffff ffffcbff ffffff00 ffffff00 ,,,0xC0
-50,OUT,9fdfffff ffffcbff ffffff00 ffffff00 ,,,0xC4
-51,,,,,0xC8
-52,RET,5ffffeff ffffcbff ffffff00 ffffff00 ,,,0xCC
-53,RR A,b7fcffff ffffcbff ffffff00 ffffff00 ,,,0xD0
-54,RL A,d7fcffff ffffcbff ffffff00 ffffff00 ,,,0xD4
-55,RRC A,b7feffff ffffcbff ffffff00 ffffff00 ,,,0xD8
-56,RLC A,d7feffff ffffcbff ffffff00 ffffff00 ,,,0xDC
-57,NOP,ffffcbff ffffff00 ffffff00 ffffff00 ,,,0xE0
-58,CPL A,96feffff ffffcbff ffffff00 ffffff00 ,,,0xE4
-59,,,,,0xE8
-60,RETI,5ffffcff ffffcbff ffffff00 ffffff00 ,,,0xEC
-61,,,,,0xF0
-62,,,,,0xF4
-63,,,,,0xF8
-64,,,,,0xFC
+,mnemonics,microinstruction,,,,address
+1,_FATCH_,CBFFFF00 FFFFFF00 FFFFFF00 FFFFFF00 ,,,,0x00
+2,,,,,,0x04
+3,,,,,,0x08
+4,,,,,,0x0C
+5,"ADD A,R?",FFF7EFFF FFFE90FF CBFFFFFF FFFFFF00 ,,,,0x10
+6,"ADD A,@R?",FF77FFFF D7BFEFFF FFFE90FF CBFFFFFF ,,,,0x14
+7,"ADD A,MM",C77FFFFF D7BFEFFF FFFE90FF CBFFFFFF ,,,,0x18
+8,"ADD A,#II",C7FFEFFF FFFE90FF CBFFFFFF FFFFFF00 ,,,,0x1C
+9,"ADDC A,R?",FFF7EFFF FFFE94FF CBFFFFFF FFFFFF00 ,,,,0x20
+10,"ADDC A,@R?",FF77FFFF D7BFEFFF FFFE94FF CBFFFFFF ,,,,0x24
+11,"ADDC A,MM",C77FFFFF D7BFEFFF FFFE94FF CBFFFFFF ,,,,0x28
+12,"ADDC A,#II",C7FFEFFF FFFE94FF CBFFFFFF FFFFFF00 ,,,,0x2C
+13,"SUB A,R?",FFF7EFFF FFFE91FF CBFFFFFF FFFFFF00 ,,,,0x30
+14,"SUB A,@R?",FF77FFFF D7BFEFFF FFFE91FF CBFFFFFF ,,,,0x34
+15,"SUB A,MM",C77FFFFF D7BFEFFF FFFE91FF CBFFFFFF ,,,,0x38
+16,"SUB A,#II",C7FFEFFF FFFE91FF CBFFFFFF FFFFFF00 ,,,,0x3C
+17,"SUBC A,R?",FFF7EFFF FFFE95FF CBFFFFFF FFFFFF00 ,,,,0x40
+18,"SUBC A,@R?",FF77FFFF D7BFEFFF FFFE95FF CBFFFFFF ,,,,0x44
+19,"SUBC A,MM",C77FFFFF D7BFEFFF FFFE95FF CBFFFFFF ,,,,0x48
+20,"SUBC A,#II",C7FFEFFF FFFE95FF CBFFFFFF FFFFFF00 ,,,,0x4C
+21,"AND A,R?",FFF7EFFF FFFE93FF CBFFFFFF FFFFFF00 ,,,,0x50
+22,"AND A,@R?",FF77FFFF D7BFEFFF FFFE93FF CBFFFFFF ,,,,0x54
+23,"AND A,MM",C77FFFFF D7BFEFFF FFFE93FF CBFFFFFF ,,,,0x58
+24,"AND A,#II",C7FFEFFF FFFE93FF CBFFFFFF FFFFFF00 ,,,,0x5C
+25,"OR A,R?",FFF7EFFF FFFE92FF CBFFFFFF FFFFFF00 ,,,,0x60
+26,"OR A,@R?",FF77FFFF D7BFEFFF FFFE92FF CBFFFFFF ,,,,0x64
+27,"OR A,MM",C77FFFFF D7BFEFFF FFFE92FF CBFFFFFF ,,,,0x68
+28,"OR A,#II",C7FFEFFF FFFE92FF CBFFFFFF FFFFFF00 ,,,,0x6C
+29,"MOV A,R?",FFF7F7FF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0x70
+30,"MOV A,@R?",FF77FFFF D7BFF7FF CBFFFFFF FFFFFF00 ,,,,0x74
+31,"MOV A,MM",C77FFFFF D7BFF7FF CBFFFFFF FFFFFF00 ,,,,0x78
+32,"MOV A,#II",C7FFF7FF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0x7C
+33,"MOV R?,A",FFFB9FFF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0x80
+34,"MOV @R?,A",FF77FFFF B7BF9FFF CBFFFFFF FFFFFF00 ,,,,0x84
+35,"MOV MM,A",C77FFFFF B7BF9FFF CBFFFFFF FFFFFF00 ,,,,0x88
+36,"MOV R?,#II",C7FBFFFF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0x8C
+37,"READ A,MM",C77FFF00 7FBFF700 CBFFFFFF FFFFFF00 ,,,,0x90
+38,"WRITE MM,A",C77FFF00 FF9F9F00 CBFFFFFF FFFFFF00 ,,,,0x94
+39,,,,,,0x98
+40,,,,,,0x9C
+41,JC MM,C6FFFFFF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xA0
+42,JZ MM,C6FFFFFF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xA4
+43,,,,,,0xA8
+44,JMP MM,C6FFFFFF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xAC
+45,,,,,,0xB0
+46,,,,,,0xB4
+47,_INT_,FFEF7F00 FEFF3F00 CBFFFF00 FFFFFF00 ,,,,0xB8
+48,CALL MM,EF7F7FFF FFEF7FFF D6BFFFFF CBFFFFFF ,,,,0xBC
+49,IN,FFFF17FF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xC0
+50,OUT,FFDF9FFF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xC4
+51,,,,,,0xC8
+52,RET,FEFF5FFF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xCC
+53,RR A,FFFCB7FF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xD0
+54,RL A,FFFCD7FF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xD4
+55,RRC A,FFFEB7FF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xD8
+56,RLC A,FFFED7FF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xDC
+57,NOP,CBFFFFFF FFFFFF00 FFFFFF00 FFFFFF00 ,,,,0xE0
+58,CPL A,FFFE96FF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xE4
+59,,,,,,0xE8
+60,RETI,FCFF5FFF CBFFFFFF FFFFFF00 FFFFFF00 ,,,,0xEC
+61,,,,,,0xF0
+62,,,,,,0xF4
+63,,,,,,0xF8
+64,,,,,,0xFC

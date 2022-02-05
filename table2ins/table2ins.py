@@ -15,7 +15,8 @@ with open('ins_table.csv', 'r', newline='') as csvfile:
             tmpins += row[1].split(' ')[1].split(',')
         while len(tmpins) < 3:
             tmpins += ['']
-        row[2] = ''.join(row[2].split(' '))
+        row[2] = [i[4:6]+i[2:4]+i[0:2]+i[6:] if i else i for i in row[2].split(' ') ]
+        row[2] = ''.join(row[2])
         tmpins.append([row[2][i:i+2] for i in range(0,len(row[2]),2)])
         instructions.append(tmpins)
 

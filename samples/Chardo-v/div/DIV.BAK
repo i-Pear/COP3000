@@ -1,0 +1,100 @@
+MOV R0,#3FH
+MOV R1,#3AH
+MOV R2,#07FH
+
+MOV A,R0
+AND A,#80H
+MOV R3,A ; R0符号位在R3最高位上
+MOV A,R2
+AND A,#80H  ; R2符号位在A最高位上
+ADD A,R3
+AND A,#80H ; A+R3最高位有符号，则异号
+MOV 0F0H,A ; 保存结果符号
+
+MOV A,R2
+AND A,#7FH
+MOV R2,A ; 清除除数符号位
+
+MOV R3,#08H
+MOV A,R3 ; 循环计数器，存放于R3
+MOV 0E0H,A
+
+MOV A,R1
+RLC A
+MOV R1,A
+MOV A,R0
+RLC A
+MOV R0,A ; (R0,R1)<<1
+
+MOV A,R2
+SUB A,R0
+JC  overflow ; 溢出预判
+
+MOV A,R0
+SUB A,R2
+MOV R0,A
+
+div_loop:
+    MOV 0F5H,A ; 记录A=R0-R2后状态
+    RLC A
+    MOV A,R1
+    RLC A
+    MOV R1,A
+    MOV A,R0
+    RLC A
+    MOV R0,A ; (R0,R1)<<1
+    JC record_carry ; 上商位为1
+    JMP count_down
+    record_carry:
+        MOV A,R3
+        MOV 0E0H,A
+    count_down:
+        MOV A,R3
+        SUB A,#01H
+        MOV R3,A ; 循环计数减一
+        JZ  div_end
+
+    MOV A,0F5H ; 根据R0-R2最高位状态判断进行加还是减
+    RLC A
+    JC div_add
+        MOV A,R0
+        SUB A,R2
+        MOV R0,A
+        JMP div_loop
+    div_add:
+        MOV A,R0
+        ADD A,R2
+        MOV R0,A
+        JMP div_loop
+
+div_end:
+    MOV A,R1
+    CPL A  ; R1取反
+    OR A,0F0H  ; 恢复符号位
+    MOV R1,A
+
+    MOV A,#01H
+    SUB A,0E0H ; 检查最后一次是否有进位
+    JZ recovery_remainder
+        ; 不恢复余数
+        MOV A,R0
+        RRC A
+        AND A,#7FH
+        MOV R0,A
+        JMP stop
+    recovery_remainder:
+        ; 恢复余数
+        MOV A,R0
+        RRC A
+        OR  A,#80H
+        ADD A,R2
+        AND A,#7FH
+        MOV R0,A
+        JMP stop
+
+overflow:
+    MOV R0,#0FFH
+    MOV R1,#0FFH
+
+stop:
+    JMP stop

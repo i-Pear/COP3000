@@ -1,0 +1,148 @@
+            ;程序要求：0FAH内存放起始地址，0FBH内存放乘数字节数，0FCH内存放循环次数（字节*8）
+            ;数据存放：假如乘数为n个字节，起始地址为s，则地址s ~ s+n-1为0，s+n ~ s+2n-1存放第一个乘数，s+2n ~ s+3n-1存放第二个乘数，最后结果存放在s ~ s+2n-1中。
+            ;输出形式：在final程序段轮流输出各地址内的值。R0存放即将输出的地址，R3存放输出值。
+            
+00 30C0     MOV A,#0C0H  ;起始地址
+02 3CFA     MOV 0FAH,A
+04 3004     MOV A,#04H  ;几个字节
+06 3CFB     MOV 0FBH,A
+08 3020     MOV A,#20H  ;几次循环（字节*8）
+0A 3CFC     MOV 0FCH,A
+            
+0C 3000     MOV A,#00H
+0E 3CC0     MOV 0C0H,A
+10 3000     MOV A,#00H
+12 3CC1     MOV 0C1H,A
+14 3000     MOV A,#00H
+16 3CC2     MOV 0C2H,A
+18 3000     MOV A,#00H
+1A 3CC3     MOV 0C3H,A
+1C 30C3     MOV A,#0C3H
+1E 3CC4     MOV 0C4H,A
+20 3061     MOV A,#61H
+22 3CC5     MOV 0C5H,A
+24 30B6     MOV A,#0B6H
+26 3CC6     MOV 0C6H,A
+28 3078     MOV A,#78H
+2A 3CC7     MOV 0C7H,A
+2C 3021     MOV A,#21H
+2E 3CC8     MOV 0C8H,A
+30 30AF     MOV A,#0AFH
+32 3CC9     MOV 0C9H,A
+34 3062     MOV A,#62H
+36 3CCA     MOV 0CAH,A
+38 300E     MOV A,#0EH
+3A 3CCB     MOV 0CBH,A
+            ;ans:
+            ;19B5 7327 4B39 EA90
+            
+            LOOP:
+3C 2CFC         MOV A,0FCH
+3E 37           MOV R3,A
+                ; R1 & 1 ?
+3F 2CFA         MOV A,0FAH
+41 08FB         ADD A,0FBH
+43 08FB         ADD A,0FBH
+45 1C01         SUB A,#01H ; R1末尾
+47 34           MOV R0,A
+48 28           MOV A,@R0
+49 1801         AND A,#01H
+4B A479         JZ addend
+                    ; R0 = R0 + R2
+4D 4000             MOV R0,#00H    ; 进位清零
+4F 2CFB             MOV A,0FBH
+51 35               MOV R1,A       ; 几个数
+52 2CFA             MOV A,0FAH
+54 08FB             ADD A,0FBH
+56 36               MOV R2,A       ; 游标0
+57 08FB             ADD A,0FBH
+59 08FB             ADD A,0FBH
+5B 37               MOV R3,A       ; 游标1
+            
+                    addloop:
+5C 25                   mov A,R1
+5D 0400                 add A,#00H
+5F A479                 jz addend
+61 1C01                 sub A,#01H
+63 35                   mov R1,A    ; 控制循环次数的计数器
+            
+64 26                   mov A,R2
+65 1C01                 sub A,#01H
+67 36                   mov R2,A
+68 27                   mov A,R3
+69 1C01                 sub A,#01H
+6B 37                   mov R3,A    ; 修改游标
+            
+6C 24                   mov A,R0
+6D 04FF                 add A,#0FFH ; 恢复进位位
+            
+6F 2A                   mov A,@R2
+70 17                   addc A,@R3
+71 3A                   mov @R2,A
+            
+72 3000                 mov A,#00H
+74 1000                 addc A,#00H
+76 34                   mov R0,A    ; 保存进位位
+            
+77 AC5C             jmp addloop
+            
+                addend:
+            
+                ; (R0,R1)>>1
+79 2CFA         MOV A,0FAH     ; 起始地址
+7B 34           MOV R0,A
+7C 2CFB         MOV A,0FBH
+7E 08FB         ADD A,0FBH
+80 35           MOV R1,A       ; 几个数（字节*2）
+81 4200         MOV R2,#00H    ; 清空进位位
+            
+                rrcloop:
+83 25               mov A,R1
+84 0400             add A,#00H
+86 A49C             jz LOOPEND
+88 1C01             sub A,#01H
+8A 35               mov R1,A
+            
+8B 26               mov A,R2
+8C 04FF             add A,#0FFH ; 恢复进位位
+            
+8E 28               mov A,@R0
+8F 44               RRC A
+90 38               mov @R0,A
+            
+91 3000             mov A,#00H
+93 1000             addc A,#00H
+95 36               mov R2,A    ; 保存进位位
+            
+96 24               mov A,R0
+97 0401             add A,#01H
+99 34               mov R0,A
+            
+9A AC83         jmp rrcloop
+            
+            
+            LOOPEND:
+9C 2CFC     MOV A,0FCH
+9E 1C01     sub A,#01H
+A0 3CFC     MOV 0FCH,A
+A2 A4A6     JZ final
+A4 AC3C     JMP LOOP
+            
+            final:
+A6 2CFA     MOV A,0FAH
+A8 34       MOV R0,A
+A9 08FB     ADD A,0FBH
+AB 08FB     ADD A,0FBH
+AD 35       MOV R1,A
+AE 4200     MOV R2,#00H
+            outputloop:
+B0 28           MOV A,@R0
+B1 37           MOV R3,A
+            
+B2 24           MOV A,R0
+B3 0401         ADD A,#01H
+B5 34           MOV R0,A
+B6 21           SUB A,R1
+B7 A4A6         jz final
+B9 ACB0         jmp outputloop
+            

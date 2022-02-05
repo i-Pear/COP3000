@@ -1,0 +1,36 @@
+MOV  R0,#00H
+MOV  R1,#88H
+MOV  R2,#82H
+MOV  R3,#80H
+
+LOOP:
+    ; R1 & 1 ?
+    MOV  A,R1
+    AND  A,#01H
+    JZ  POS0
+        ; R0 = R0 + R2
+        MOV  A,R0
+        ADD  A,R2
+        MOV  R0,A
+    POS0:
+
+    ; (R0,R1)>>1
+    ADD  A,#00H ;清空进位位
+    MOV  A,R0
+    RRC  A
+    MOV  R0,A
+    MOV  A,R1
+    RRC  A
+    MOV  R1,A
+
+
+LOOPEND:
+MOV  A,R3
+ADD  A,#00H
+RRC  A
+MOV  R3,A
+JZ  NOPE
+JMP  LOOP
+
+NOPE:
+JMP  NOPE

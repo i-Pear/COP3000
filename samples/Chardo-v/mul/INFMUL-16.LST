@@ -1,0 +1,125 @@
+00 30B0     MOV  A,#0B0H
+02 3CFA     MOV  0FAH,A
+04 3002     MOV  A,#02H
+06 3CFB     MOV  0FBH,A
+08 3010     MOV  A,#10H
+0A 3CFC     MOV  0FCH,A
+            
+0C 3000     MOV  A,#00H
+0E 3CB0     MOV  0B0H,A
+10 3000     MOV  A,#00H
+12 3CB1     MOV  0B1H,A
+14 3032     MOV  A,#32H
+16 3CB2     MOV  0B2H,A
+18 3033     MOV  A,#33H
+1A 3CB3     MOV  0B3H,A
+1C 3070     MOV  A,#70H
+1E 3CB4     MOV  0B4H,A
+20 3068     MOV  A,#68H
+22 3CB5     MOV  0B5H,A
+            ; ans: 160A B4B8
+            
+            LOOP:
+24 2CFC         mov A,0FCH
+26 37           mov R3,A
+                ; R1 & 1 ?
+27 2CFA         MOV  A,0FAH
+29 08FB         ADD  A,0FBH
+2B 08FB         ADD  A,0FBH
+2D 1C01         SUB  A,#01H ; R1ĩβ
+2F 34           mov  R0,A
+30 28           mov  A,@R0
+31 1801         AND  A,#01H
+33 A461         JZ  addend
+                    ; R0 = R0 + R2
+35 4000             MOV  R0,#00H
+37 2CFB             mov  A,0FBH
+39 35               MOV  R1,A
+3A 2CFA             MOV  A,0FAH
+3C 08FB             add  A,0FBH
+3E 36               mov  R2,A
+3F 08FB             add  A,0FBH
+41 08FB             add  A,0FBH
+43 37               MOV  R3,A
+            
+                    addloop:
+44 25                   mov A,R1
+45 0400                 add A,#00H
+47 A461                 jz addend
+49 1C01                 sub A,#01H
+4B 35                   mov R1,A
+            
+4C 26                   mov A,R2
+4D 1C01                 sub A,#01H
+4F 36                   mov R2,A
+50 27                   mov A,R3
+51 1C01                 sub A,#01H
+53 37                   mov R3,A
+            
+54 24                   mov A,R0
+55 04FF                 add A,#0FFH
+            
+57 2A                   mov A,@R2
+58 17                   addc A,@R3
+59 3A                   mov @R2,A
+            
+5A 3000                 mov A,#00H
+5C 1000                 addc A,#00H
+5E 34                   mov R0,A
+            
+5F AC44             jmp addloop
+            
+                addend:
+            
+                ; (R0,R1)>>1
+61 2CFA         MOV  A,0FAH
+63 34           mov  R0,A
+64 2CFB         MOV  A,0FBH
+66 08FB         ADD  A,0FBH
+68 35           MOV  R1,A
+69 4200         mov  R2,#00H
+            
+                rrcloop:
+6B 25               mov A,R1
+6C 0400             add A,#00H
+6E A484             jz LOOPEND
+70 1C01             sub A,#01H
+72 35               mov R1,A
+            
+73 26               mov A,R2
+74 04FF             add A,#0FFH
+            
+76 28               mov A,@R0
+77 44               RRC A
+78 38               mov @R0,A
+            
+79 3000             mov A,#00H
+7B 1000             addc A,#00H
+7D 36               mov R2,A
+            
+7E 24               mov A,R0
+7F 0401             add A,#01H
+81 34               mov R0,A
+            
+82 AC6B         jmp rrcloop
+            
+            
+            LOOPEND:
+84 2CFC     MOV  A,0FCH
+86 1C01     sub  A,#01H
+88 3CFC     MOV  0FCH,A
+8A A48E     JZ  final
+8C AC24     JMP  LOOP
+            
+            final:
+8E 2CB0     mov A,0B0H
+90 34       mov R0,A
+91 2CB1     mov A,0B1H
+93 35       mov R1,A
+94 2CB2     mov A,0B2H
+96 36       mov R2,A
+97 2CB3     mov A,0B3H
+99 37       mov R3,A
+            nope:
+9A AC9A     JMP  nope
+            

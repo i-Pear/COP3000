@@ -1,0 +1,37 @@
+00 4000     MOV  R0,#00H
+02 4188     MOV  R1,#88H
+04 4282     MOV  R2,#82H
+06 4380     MOV  R3,#80H
+            
+            LOOP:
+                ; R1 & 1 ?
+08 25           MOV  A,R1
+09 1801         AND  A,#01H
+0B A410         JZ  POS0
+                    ; R0 = R0 + R2
+0D 24               MOV  A,R0
+0E 0E               ADD  A,R2
+0F 34               MOV  R0,A
+                POS0:
+            
+                ; (R0,R1)>>1
+10 0400         ADD  A,#00H ;清空进位位
+12 24           MOV  A,R0
+13 44           RRC  A
+14 34           MOV  R0,A
+15 25           MOV  A,R1
+16 44           RRC  A
+17 35           MOV  R1,A
+            
+            
+            LOOPEND:
+18 27       MOV  A,R3
+19 0400     ADD  A,#00H
+1B 44       RRC  A
+1C 37       MOV  R3,A
+1D A421     JZ  NOPE
+1F AC08     JMP  LOOP
+            
+            NOPE:
+21 AC21     JMP  NOPE
+            
